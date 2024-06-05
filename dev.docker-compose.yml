@@ -1,0 +1,50 @@
+# https://matthewsetter.com/override-image-command-docker-compose/
+
+
+version: "3"
+
+
+services:
+  
+  backend:
+
+    depends_on:
+      - db
+
+    build:
+      dockerfile: tests/Dockerfile
+      context: .
+    
+    ports:
+      - 8000:8000
+    
+    env_file:
+      - ./.env
+
+    volumes:
+      - .:/opt/app
+
+    command: uvicorn app.main:app  --host 0.0.0.0  --port 8000  --reload
+    # -s  to see print statements
+    #pytest --verbose -s --disable-warnings --exitfirst
+  
+
+  db:
+
+    image: postgres:alpine
+
+    ports:
+      - 5433:5432
+    
+    env_file:
+      - ./.env
+    
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+
+
+volumes:
+
+  postgres:
+
